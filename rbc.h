@@ -46,7 +46,7 @@ void add_train(trainData trainRegister[], char * no_train){
 
 void remove_train(trainData trainRegister[], char * no_train){
     for(int i = 0;i<TRACKLENGTH;i++){
-        if ((trainRegister[i].loc == TRACKLENGTH) && (trainRegister[i].no_train == no_train)){
+        if ((trainRegister[i].loc == TRACKLENGTH) && (!strcmp(trainRegister[i].no_train, no_train))){
             trainRegister[i] = empty_train;
         }
     }
@@ -130,12 +130,25 @@ void parse_msg(trainData trainRegister[], char * msg){
     printf("Decoded message %s for train %s, procedure %d (%c), with data %s\n", msg, name_buffer, procedure_to_call, procedure_to_call, data_buffer);
 
     if (procedure_to_call == 1){
+        add_train(trainRegister, name_buffer);
+        // TODO : answer ack
     }
     else if (procedure_to_call == 2){
-
+        remove_train(trainRegister, name_buffer);
+        // TODO : answer ack
     }
     else if (procedure_to_call == 3){
-
+        char end_buffer[10] = "";
+        j = 0;
+        i = 0;
+        while(data_buffer[i] != ':'){
+            end_buffer[j] = data_buffer[i];
+            j++;
+            i++;
+        }
+        printf("Ask permission to move %s to %s\n", name_buffer, end_buffer);
+        int answer = ask_permission(trainRegister, name_buffer, atoi(end_buffer));
+        // TODO : send answer
     }
     else if (procedure_to_call == 4){
         char end_buffer[10] = "";
@@ -148,5 +161,6 @@ void parse_msg(trainData trainRegister[], char * msg){
         }
         printf("Move %s to %s\n", name_buffer, end_buffer);
         move_train(trainRegister, name_buffer, atoi(end_buffer));
+        // TODO : answer ack
     }
 }
