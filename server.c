@@ -36,19 +36,18 @@ void init_server_socket(struct sockaddr_in * adrecriv, int * sd, struct sockaddr
 
 }
 
-void scan_msg(char * buffer[30], struct sockaddr_in * adrecriv, int * sd){
+void scan_msg(char buffer[MAXOCTETS+1], struct sockaddr_in * adrecriv, int * sd){
     char buff_emission[MAXOCTETS+1];
     int nbcar;
-    char buff_reception[MAXOCTETS+1];
     socklen_t adrecriv_len;
     adrecriv_len = sizeof(adrecriv);
     //reception du message de la part de l'écrivain
-    nbcar=recvfrom(*sd, buff_reception, MAXOCTETS+1, 0, (struct sockaddr * ) adrecriv, &adrecriv_len);
+    nbcar=recvfrom(*sd, buffer, MAXOCTETS+1, 0, (struct sockaddr * ) adrecriv, &adrecriv_len);
     CHECK_ERROR(nbcar, 0, "\nProbleme de reception !!! \n");
-    printf("MSG RECU DU CLIENT ADRESSE IP %s > %s\n", inet_ntoa(adrecriv->sin_addr), buff_reception);
+    printf("MSG RECU DU CLIENT ADRESSE IP %s > %s\n", inet_ntoa(adrecriv->sin_addr), buffer);
 
     //vérification de la demande de déconnexion
-    if (strcmp(buff_emission, "exit") == 0 || strcmp(buff_reception, "exit") == 0){
+    if (strcmp(buff_emission, "exit") == 0 || strcmp(buffer, "exit") == 0){
         CHECK_ERROR(close(*sd), -1, "Erreur lors de la fermeture de la socket");
         return;
     }
@@ -71,22 +70,43 @@ int main(int argc, char * argv[]) {
 
     printf("Adrlect %d port %d\n", adrlect.sin_addr.s_addr, adrlect.sin_port);
     
+    
+    trainData trainRegister[TRACKLENGTH];
+    
+    init_register(trainRegister);
 
+    add_train(trainRegister, "TGV0");
+
+    display_trains(trainRegister);
+
+    move_train(trainRegister, 0,10);
+
+    add_train(trainRegister, "TGV1");
+
+    move_train(trainRegister, 10, 50);
+
+    move_train(trainRegister, 0, 30);
+
+    add_train(trainRegister, "TER0");
+
+    move_train(trainRegister, 0, 100);
+
+    move_train(trainRegister, 400, 700);
+    
+    parse_msg(trainRegister, "TGV0:4:50:150:");
+
+    fprintf(stderr, "test");
+    
     while (1){
-        char buffer[30];
-        scan_msg(&buffer, &adrecriv, &sd);
-        // //envoie du message à l'écrivain
-        // printf("SERVEUR> ");
-        // fgets(buff_emission, MAXOCTETS, stdin);
-        // buff_emission[strlen(buff_emission)-1] = '\0';
-        // nbcar = sendto(sd, buff_emission, strlen(buff_emission)+1, 0, (const struct sockaddr *) &adrecriv, sizeof(adrecriv));
-        // CHECK_ERROR(nbcar, 0, "\nProbleme d'emission !!! \n");
+        char buffer[MAXOCTETS+1] = {""};
 
-        // //vérification de la demande de déconnexion
-        // if (strcmp(buff_emission, "exit") == 0 || strcmp(buff_reception, "exit") == 0){
-        //     CHECK_ERROR(close(sd), -1, "Erreur lors de la fermeture de la socket");
-        //     break;
-        // }
+        printf("buffer is %s", buffer);
+
+        scan_msg(&buffer, &adrecriv, &sd);
+        
+        parse_msg(trainRegister, buffer);
+    
+        display_trains(trainRegister);
 
     }
     
