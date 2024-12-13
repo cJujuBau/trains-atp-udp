@@ -8,21 +8,19 @@ int main(){
 
     display_trains(trainRegister);
 
-    move_train(trainRegister, 0,10);
+    move_train(trainRegister, "TGV0",10);
 
     add_train(trainRegister, "TGV1");
 
-    move_train(trainRegister, 10, 50);
+    move_train(trainRegister, "TGV0", 50);
 
-    move_train(trainRegister, 0, 30);
+    move_train(trainRegister, "TGV1", 30);
 
     add_train(trainRegister, "TER0");
 
-    move_train(trainRegister, 0, 100);
+    move_train(trainRegister, "TER0", 100);
 
-    move_train(trainRegister, 400, 700);
-
-    parse_msg(trainRegister, "TGV0:4:50:150:");
+    parse_msg(trainRegister, "TGV0:4:150:");
 
     display_trains(trainRegister);
 }
