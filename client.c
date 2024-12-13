@@ -8,20 +8,16 @@
 #define CHECK_ERROR(val1, val2, msg)	if (val1==val2) { printf("%s \n", msg) ; exit(EXIT_FAILURE); }
 #define MAXCARS	80
 
-#define LOCALIP     "172.20.10.3"
-
-
-//train:command:option
-//ter500:reg/for/unr:./52/.
-
-// ./client ipserv portserv
-
-int main (int argc, char ** argv)
+int main (int argc, char * argv[])
 {
+    if (argc<4){
+        printf("Missing arguments. Use ./client <ipserv> <portserv> <iplocal>\n");
+        exit(0);
+    }
     int sd; //socket de dialogue
     struct sockaddr_in addr_evc, addr_rbc;
     int longaddr;
-    int nbcar; 
+    int nbcar;
 
     int code_erreur;
 
@@ -38,7 +34,7 @@ int main (int argc, char ** argv)
     //addr_evc.sin_port = 2000; 
     addr_rbc.sin_family=AF_INET;
 
-    addr_evc.sin_addr.s_addr = inet_addr(LOCALIP);
+    addr_evc.sin_addr.s_addr = inet_addr(argv[3]);
 
     if (argc < 3){
         printf("usage %s <adresse ip rbc> <port rbc>", argv[0]); 
