@@ -12,12 +12,11 @@
                                     { perror(msg); \
                                         exit(EXIT_FAILURE); }
 
-#define LOCALPORT   3000
-#define LOCALIP     "172.31.71.203"
+// To use : ./server <ip> <port>
 
 #define MAXOCTETS   150
 
-void init_server_socket(struct sockaddr_in * adrecriv, int * sd, struct sockaddr_in * adrlect, int * erreur){
+void init_server_socket(struct sockaddr_in * adrecriv, int * sd, struct sockaddr_in * adrlect, int * erreur, char * local_ip, int local_port){
     // init_server_socket(adrecriv, sd, adrlect, erreur);
     *sd = 1;
     printf("Test\n");
@@ -25,11 +24,11 @@ void init_server_socket(struct sockaddr_in * adrecriv, int * sd, struct sockaddr
     CHECK_ERROR(*sd, -1, "Erreur socket non cree !!! \n");
     printf("N° de la socket : %d \n", *sd);
     
-    printf("Adrlect %d port %d\n", inet_addr(LOCALIP), htons(LOCALPORT));
+    printf("Adrlect %d port %d\n", inet_addr(local_ip), htons(local_port));
     //preparation de l'adresse de la socket
     adrlect->sin_family = AF_INET;
-    adrlect->sin_port = htons(LOCALPORT);
-    adrlect->sin_addr.s_addr = inet_addr(LOCALIP);
+    adrlect->sin_port = htons(local_port);
+    adrlect->sin_addr.s_addr = inet_addr(local_ip);
     
     //Affectation d'une adresse a la socket
     *erreur=bind(*sd, (const struct sockaddr *) adrlect, sizeof(*adrlect));
@@ -55,13 +54,20 @@ void scan_msg(char * buffer[30], struct sockaddr_in * adrecriv, int * sd){
     }
 }
 
-int main() {
+int main(int argc, char * argv[]) {
+    if (argc < 3){
+        printf("Missing arguments. Use ./server <ip> <port>\n");
+        exit(0);
+    }
+    char * local_ip = argv[1];
+    int local_port = atoi(argv[2]);
+    printf("%s, %d\n", local_ip, local_port);
     int sd;
     int erreur;
     struct sockaddr_in adrlect;
     struct sockaddr_in adrecriv;
 
-    init_server_socket(&adrecriv, &sd, &adrlect, &erreur);
+    init_server_socket(&adrecriv, &sd, &adrlect, &erreur, local_ip, local_port);
 
     printf("Adrlect %d port %d\n", adrlect.sin_addr.s_addr, adrlect.sin_port);
     
