@@ -22,5 +22,7 @@ int main(){
 
     move_train(trainRegister, 400, 700);
 
+    parse_msg(trainRegister, "TGV0:4:50:150:");
+
     display_trains(trainRegister);
 }

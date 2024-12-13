@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 
-#define TRACKLENGTH 10000
+#define TRACKLENGTH 1000
 
 typedef struct{
     char no_train[20];
@@ -11,6 +12,16 @@ typedef struct{
 } trainData;
 
 trainData empty_train;
+
+/*
+Procedures to call :
+id 1 : add train, data = name
+id 2 : remove train, data = name
+id 3 : ask permission
+id 4 : move train
+
+
+*/
 
 void add_train(trainData trainRegister[], char * name){
     if ((trainRegister[0].loc == 0) && (trainRegister[0].no_train[0] != 0)) {
@@ -98,6 +109,55 @@ void move_train(trainData trainRegister[], int old_location, int new_location){
     }
 }
 
-void parse_msg(char * msg){
-    
+void parse_msg(trainData trainRegister[], char * msg){
+    char name_buffer[10];
+    int i = 0;
+    while (i<strlen(msg) && msg[i] != ':'){
+        name_buffer[i] = msg[i];
+        i++;
+    }
+    i++;
+    int procedure_to_call = msg[i] - '0';
+    i += 2;
+    char data_buffer[20] = {""};
+    int j = 0;
+    while(msg[i] != 0){
+        data_buffer[j] = msg[i];
+        i++;
+        j++;
+    }
+
+    printf("Decoded message %s for train %s, procedure %d (%c), with data %s\n", msg, name_buffer, procedure_to_call, procedure_to_call, data_buffer);
+
+    if (procedure_to_call == 1){
+    }
+    else if (procedure_to_call == 2){
+
+    }
+    else if (procedure_to_call == 3){
+
+    }
+    else if (procedure_to_call == 4){
+        char start_buffer[10] = "";
+        char end_buffer[10] = "";
+        j = 0;
+        i = 0;
+        while(data_buffer[i] != ':'){
+            start_buffer[j] = data_buffer[i];
+            printf("Added %c to start\n", data_buffer[i]);
+            j++;
+            i++;
+        }
+        i++;
+        j = 0;
+        while(data_buffer[i] != ':'){
+            end_buffer[j] = data_buffer[i];
+            printf("Added %c to end\n", data_buffer[i]);
+            j++;
+            i++;
+        }
+
+        printf("Move from %s to %s\n", start_buffer, end_buffer);
+        move_train(trainRegister, atoi(start_buffer), atoi(end_buffer));
+    }
 }
