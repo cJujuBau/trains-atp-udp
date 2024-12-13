@@ -51,6 +51,9 @@ void display_trains(trainData trainRegister[]){
 }
 
 void init_register(trainData trainRegister[]){
+    strcpy(empty_train.no_train, "");
+    empty_train.loc = -1;
+    empty_train.eoa = -1;
     for (int i = 0;i<TRACKLENGTH;i++){
         trainRegister[i] = empty_train;
     }
@@ -93,4 +96,8 @@ void move_train(trainData trainRegister[], int old_location, int new_location){
             trainRegister[i-1].eoa = new_location - 1;
         }
     }
+}
+
+void parse_msg(char * msg){
+    
 }

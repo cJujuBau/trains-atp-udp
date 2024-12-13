@@ -1,10 +1,6 @@
 #include "rbc.h"
 
 int main(){
-    strcpy(empty_train.no_train, "");
-    empty_train.loc = -1;
-    empty_train.eoa = -1;
-
     trainData trainRegister[TRACKLENGTH];
     init_register(trainRegister);
 
