@@ -10,7 +10,6 @@
 
 #define LOCALIP     "172.20.10.3"
 
-
 //train:command:option
 //ter500:reg/for/unr:./52/.
 

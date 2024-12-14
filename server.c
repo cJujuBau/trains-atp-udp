@@ -25,15 +25,15 @@ void init_server_socket(struct sockaddr_in * adrecriv, int * sd, struct sockaddr
     printf("N° de la socket : %d \n", *sd);
     
     printf("Adrlect %d port %d\n", inet_addr(local_ip), htons(local_port));
-    //preparation de l'adresse de la socket
+    
+    // preparation de l'adresse de la socket
     adrlect->sin_family = AF_INET;
     adrlect->sin_port = htons(local_port);
     adrlect->sin_addr.s_addr = inet_addr(local_ip);
     
-    //Affectation d'une adresse a la socket
+    // Affectation d'une adresse a la socket
     *erreur=bind(*sd, (const struct sockaddr *) adrlect, sizeof(*adrlect));
     CHECK_ERROR(*erreur, -1, "Erreur de bind !!! \n");
-
 }
 
 void scan_msg(char buffer[MAXOCTETS+1], struct sockaddr_in * adrecriv, int * sd){
@@ -97,18 +97,33 @@ int main(int argc, char * argv[]) {
 
     fprintf(stderr, "test");
     
-    while (1){
-        char buffer[MAXOCTETS+1] = {""};
+    while (1) {
+        char buffer[MAXOCTETS + 1] = {""};
+        scan_msg(buffer, &adrecriv, &sd); // Réception du message
 
-        printf("buffer is %s", buffer);
+        if (strcmp(buffer, "exit") == 0) {
+            printf("Déconnexion demandée par le client.\n");
+            break;
+        }
 
-        scan_msg(&buffer, &adrecriv, &sd);
-        
-        parse_msg(trainRegister, buffer);
-    
-        display_trains(trainRegister);
+        // Préparer une réponse et l'envoyer
+        char response[MAXOCTETS + 1];
+        snprintf(response, sizeof(response), "Message reçu : %s", buffer);
 
+        answer(response, &adrecriv, &sd); // Envoi de la réponse au client
     }
-    
+
     exit(EXIT_SUCCESS);
+}
+
+void answer(const char *message, struct sockaddr_in *adrecriv, int *sd) {
+    socklen_t adrecriv_len = sizeof(*adrecriv); // Taille de la structure sockaddr_in
+    int nbcar;
+
+    // Envoi du message au client
+    nbcar = sendto(*sd, message, strlen(message), 0, (struct sockaddr *)adrecriv, adrecriv_len);
+    CHECK_ERROR(nbcar, -1, "Erreur lors de l'envoi du message");
+
+    printf("Réponse envoyée au client [%s:%d] : %s\n",
+           inet_ntoa(adrecriv->sin_addr), ntohs(adrecriv->sin_port), message);
 }

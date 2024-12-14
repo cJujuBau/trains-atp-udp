@@ -19,8 +19,6 @@ id 1 : add train, data = name, server answers acknowledge
 id 2 : remove train, data = name, servers answers acknowledfe
 id 3 : ask permission, data = name, destination, servers answers yes no
 id 4 : move train, data = name, destination, server answers acknowledge
-
-
 */
 
 void add_train(trainData trainRegister[], char * name){
